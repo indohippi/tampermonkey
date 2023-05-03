@@ -1,0 +1,113 @@
+// ==UserScript==
+// @name         Infinity Routes Calculator UI
+// @namespace    http://tampermonkey.net/
+// @version      0.5
+// @description  Create a UI for the Infinity Routes Calculator
+// @author       Jared Wienen
+// @match        https://na.route.planning.last-mile.a2z.com/route-planning/*
+// @grant        GM_addStyle
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Add custom styles
+    GM_addStyle(`
+        #calculatorUI {
+            position: fixed;
+            bottom: 10px;
+            left: 1000px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            z-index: 9999;
+        }
+        #calculatorUI label {
+            display: inline-block;
+            width: 120px;
+        }
+    `);
+
+    // Function to calculate the decision
+   function calculateDecision(minutes, vehicle, planned, spr, time, lmcp) {
+    const iv = planned * spr;
+    const tv = lmcp + iv;
+    const percentage = (iv / tv) * 100;
+
+    return {
+        infinityVolume: iv.toFixed(2),
+        percentage: percentage.toFixed(2),
+        decision: percentage > 5 ? "Disrupt" : "No Disruption"
+    };
+}
+
+
+
+
+
+    // Function to generate the UI elements
+    function createUI() {
+        const ui = document.createElement('div');
+        ui.id = 'calculatorUI';
+
+        const valuesLabel = document.createElement('label');
+        valuesLabel.textContent = 'Paste values:';
+        ui.appendChild(valuesLabel);
+
+        const valuesInput = document.createElement('input');
+        valuesInput.type = 'text';
+        valuesInput.id = 'values';
+        ui.appendChild(valuesInput);
+
+        const lmcpLabel = document.createElement('label');
+        lmcpLabel.textContent = 'LMCP Value:';
+        ui.appendChild(lmcpLabel);
+
+        const lmcpInput = document.createElement('input');
+        lmcpInput.type = 'number';
+        lmcpInput.id = 'lmcp';
+        ui.appendChild(lmcpInput);
+
+        const calculateButton = document.createElement('button');
+        calculateButton.textContent = 'Calculate';
+        ui.appendChild(calculateButton);
+
+        const decisionDisplay = document.createElement('p');
+        decisionDisplay.id = 'decisionDisplay';
+        ui.appendChild(decisionDisplay);
+
+        const percentageDisplay = document.createElement('p');
+        percentageDisplay.id = 'percentageDisplay';
+        ui.appendChild(percentageDisplay);
+
+        const infinityVolumeDisplay = document.createElement('p');
+        infinityVolumeDisplay.id = 'infinityVolumeDisplay';
+        ui.appendChild(infinityVolumeDisplay);
+
+        calculateButton.addEventListener('click', () => {
+            const values = valuesInput.value.split(/\s+/).filter(value => value !== '');
+            const minutes = parseFloat(values[0]);
+            const vehicle = parseFloat(values[5].slice(0, -1)) / 100;
+            const planned = parseFloat(values[3]);
+            const spr = parseFloat(values[4]);
+            const time = parseFloat(values[6].slice(0, -1)) / 100;
+            const lmcp = parseFloat(lmcpInput.value);
+            const result = calculateDecision(minutes, vehicle, planned, spr, time, lmcp);
+            decisionDisplay.textContent = 'Decision: ' + result.decision;
+            percentageDisplay.textContent = 'Infinity Volume % to Total Volume: ' + result.percentage + '%';
+            infinityVolumeDisplay.textContent = 'Total Infinity Volume: ' + result.infinityVolume;
+        });
+
+        return ui;
+    }
+
+    // Function to add the UI to the page
+    function addUI() {
+        const ui = createUI();
+        document.body.appendChild(ui);
+    }
+
+    // Add the UI initially
+    addUI();
+})();
+
