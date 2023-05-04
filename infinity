@@ -31,8 +31,7 @@
     // Function to calculate the decision
    function calculateDecision(minutes, vehicle, planned, spr, time, lmcp) {
     const iv = planned * spr;
-    const tv = lmcp + iv;
-    const percentage = (iv / tv) * 100;
+    const percentage = (iv / lmcp) * 100;
 
     return {
         infinityVolume: iv.toFixed(2),
@@ -40,6 +39,7 @@
         decision: percentage > 5 ? "Disrupt" : "No Disruption"
     };
 }
+
 
 
 
