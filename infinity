@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.6
 // @description  Create a UI for the Infinity Routes Calculator
-// @author       You
+// @author       Jared Wienen
 // @match        https://na.route.planning.last-mile.a2z.com/route-planning/*
 // @grant        GM_addStyle
 // ==/UserScript==
