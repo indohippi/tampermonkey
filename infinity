@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Infinity Routes Calculator UI
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  Create a UI for the Infinity Routes Calculator
-// @author       Jared Wienen
+// @author       You
 // @match        https://na.route.planning.last-mile.a2z.com/route-planning/*
 // @grant        GM_addStyle
 // ==/UserScript==
@@ -15,35 +15,31 @@
     GM_addStyle(`
         #calculatorUI {
             position: fixed;
-            bottom: 10px;
-            left: 1000px;
+            top: 70%;
+            left: 10;
             background-color: #f9f9f9;
             border: 1px solid #ccc;
             padding: 10px;
             z-index: 9999;
+            width: 200px;
         }
         #calculatorUI label {
             display: inline-block;
-            width: 120px;
+            width: 100px;
         }
     `);
 
     // Function to calculate the decision
-   function calculateDecision(minutes, vehicle, planned, spr, time, lmcp) {
-    const iv = planned * spr;
-    const percentage = (iv / lmcp) * 100;
+    function calculateDecision(minutes, vehicle, planned, spr, time, lmcp) {
+        const iv = planned * spr;
+        const percentage = (iv / lmcp) * 100;
 
-    return {
-        infinityVolume: iv.toFixed(2),
-        percentage: percentage.toFixed(2),
-        decision: percentage > 5 ? "Disrupt" : "No Disruption"
-    };
-}
-
-
-
-
-
+        return {
+            infinityVolume: iv.toFixed(2),
+            percentage: percentage.toFixed(2),
+            decision: percentage > 5 ? "Disrupt" : "No Disruption"
+        };
+    }
 
     // Function to generate the UI elements
     function createUI() {
@@ -94,8 +90,8 @@
             const lmcp = parseFloat(lmcpInput.value);
             const result = calculateDecision(minutes, vehicle, planned, spr, time, lmcp);
             decisionDisplay.textContent = 'Decision: ' + result.decision;
-            percentageDisplay.textContent = 'Infinity Volume % to Total Volume: ' + result.percentage + '%';
-            infinityVolumeDisplay.textContent = 'Total Infinity Volume: ' + result.infinityVolume;
+            percentageDisplay.textContent = 'Infinity Volume % to LMCP: ' + result.percentage + '%';
+                        infinityVolumeDisplay.textContent = 'Total Infinity Volume: ' + result.infinityVolume;
         });
 
         return ui;
